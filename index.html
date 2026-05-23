@@ -16,7 +16,6 @@
 --danger:#ff4444;--success:#47ff8a;--warning:#ffb347;
 }
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
-.syne{font-family:'Syne',sans-serif}
 .nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:12px 0 20px;z-index:100}
 .nav-btn{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:10px;cursor:pointer;transition:color 0.2s;padding:4px 12px}
 .nav-btn.active{color:var(--accent)}
@@ -71,7 +70,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .btn-accent{background:var(--accent);color:#0a0a0a}
 .btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
 .btn-sm{padding:9px 16px;font-size:12px;margin-top:0;width:auto}
-input[type=text],input[type=number],textarea,select{background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;padding:10px 12px;width:100%;outline:none;transition:border 0.2s;margin-top:8px}
+input[type=text],input[type=number],textarea{background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;padding:10px 12px;width:100%;outline:none;transition:border 0.2s;margin-top:8px}
 input:focus,textarea:focus{border-color:var(--accent)}
 textarea{resize:none;min-height:100px}
 .goal-card{background:linear-gradient(135deg,#1a1a0a,#0a150a);border:1px solid #3a3a1a;border-radius:16px;padding:20px;margin-bottom:12px}
@@ -194,7 +193,7 @@ textarea{resize:none;min-height:100px}
     </div>
     <div style="margin-top:16px">
       <div class="card-label">Describe the project & where you're at</div>
-      <textarea id="video-desc" placeholder="e.g. 60-sec explainer for fintech client. Script and storyboard already received from client. Now handling After Effects animation and delivery. Due in 3 days."></textarea>
+      <textarea id="video-desc" placeholder="e.g. 60-sec explainer for fintech client. Script and storyboard already received. Now handling After Effects animation and delivery. Due in 3 days."></textarea>
     </div>
     <button class="btn btn-accent" onclick="buildVideoChecklist()">Build Checklist ✦</button>
   </div>
@@ -355,20 +354,16 @@ textarea{resize:none;min-height:100px}
 </nav>
 
 <script>
-const GEMINI_KEY = 'AIzaSyBl0888kSE09TLY9ByPD-bedcgUf6g-RmA';
-const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + GEMINI_KEY;
-
-async function callGemini(prompt) {
-  const res = await fetch(GEMINI_URL, {
+async function callAI(prompt) {
+  const res = await fetch('/.netlify/functions/gemini', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({contents:[{parts:[{text: prompt}]}]})
+    body: JSON.stringify({prompt})
   });
   const data = await res.json();
-  return data.candidates[0].content.parts[0].text;
+  return data.text;
 }
 
-// STATE
 let S = {
   balance: 11600, pending: 40000, weekSpent: 0,
   debts: [
@@ -381,11 +376,10 @@ let S = {
   videoItems:[], videoDesc:'', videoNote:'',
   health:[]
 };
-function save(){try{localStorage.setItem('sz2',JSON.stringify(S))}catch(e){}}
-function load(){try{const d=localStorage.getItem('sz2');if(d)S=JSON.parse(d)}catch(e){}}
+function save(){try{localStorage.setItem('sz3',JSON.stringify(S))}catch(e){}}
+function load(){try{const d=localStorage.getItem('sz3');if(d)S=JSON.parse(d)}catch(e){}}
 load();
 
-// NAV
 function goTo(s){
   document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
@@ -398,13 +392,11 @@ function goTo(s){
   if(s==='video') restoreVideo();
 }
 
-// DATES
 function fmtDate(d){return d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'})}
-document.getElementById('home-date').textContent = fmtDate(new Date());
-document.getElementById('daily-date').textContent = fmtDate(new Date());
-document.getElementById('fin-date').textContent = fmtDate(new Date());
+document.getElementById('home-date').textContent=fmtDate(new Date());
+document.getElementById('daily-date').textContent=fmtDate(new Date());
+document.getElementById('fin-date').textContent=fmtDate(new Date());
 
-// HOME
 function renderHome(){
   document.getElementById('h-balance').textContent='₹'+S.balance.toLocaleString('en-IN');
   document.getElementById('h-pending').textContent='₹'+S.pending.toLocaleString('en-IN');
@@ -420,7 +412,6 @@ function renderHome(){
   }
 }
 
-// FINANCE
 function renderFinance(){
   document.getElementById('f-balance').textContent='₹'+S.balance.toLocaleString('en-IN');
   document.getElementById('f-pending').textContent='₹'+S.pending.toLocaleString('en-IN');
@@ -441,12 +432,11 @@ function renderFinance(){
 function editBalance(){const v=prompt('Current bank balance (₹):');if(v&&!isNaN(v)){S.balance=+v;save();renderFinance();renderHome();toast('Balance updated');}}
 function editPending(){const v=prompt('Total pending receivables (₹):');if(v&&!isNaN(v)){S.pending=+v;save();renderFinance();renderHome();toast('Updated');}}
 function addSpend(){const v=+document.getElementById('spend-input').value;if(!v||v<=0)return;S.weekSpent+=v;document.getElementById('spend-input').value='';save();renderFinance();toast('-₹'+v.toLocaleString('en-IN')+' from envelope');}
-function resetEnvelope(){if(confirm('Reset weekly envelope to ₹6,000?')){S.weekSpent=0;save();renderFinance();toast('Envelope reset');}}
+function resetEnvelope(){if(confirm('Reset weekly envelope?')){S.weekSpent=0;save();renderFinance();toast('Envelope reset');}}
 function showDebtEditor(){document.getElementById('debt-editor').style.display='block';S.debts.forEach((d,i)=>document.getElementById('d'+(i+1)).value=d.cur||'');}
 function hideDebtEditor(){document.getElementById('debt-editor').style.display='none';}
 function saveDebts(){S.debts.forEach((d,i)=>{const v=+document.getElementById('d'+(i+1)).value;if(!isNaN(v)&&v>=0)d.cur=v;});save();renderFinance();hideDebtEditor();toast('Debts updated');}
 
-// HEALTH
 function renderHealth(){
   const el=document.getElementById('h-history');
   if(!S.health.length){el.innerHTML='<div style="font-size:13px;color:var(--muted);text-align:center;padding:8px">No logs yet</div>';return;}
@@ -459,7 +449,6 @@ function saveHealth(){
   toast('Week logged!');
 }
 
-// DAILY — AI POWERED
 let selectedDayType='';
 function pickDay(type,el){
   selectedDayType=type;
@@ -472,71 +461,49 @@ async function buildDailyChecklist(){
   const extra=document.getElementById('daily-extra').value;
   const totalDebt=S.debts.reduce((a,d)=>a+d.cur,0);
   const envelopeLeft=Math.max(0,6000-S.weekSpent);
-
+  const dayLabels={weekday:'Weekday — office day, leaves home 7:30am, back 10pm due to commute',weekend:'Weekend — rest day, no office',wfh:'Work from home day'};
   document.getElementById('daily-setup').style.display='none';
   document.getElementById('daily-loading').style.display='block';
-
-  const dayLabels={weekday:'Weekday (office day, leaves 7:30am, back 10pm due to commute)',weekend:'Weekend (rest day, no office)',wfh:'Work from home day'};
-
   const prompt=`You are a personal life coach AI for Shazam, a 28-year-old motion graphics designer in Bangalore, India.
 
 SHAZAM'S CONTEXT:
-- Works at MathCo on adoption enablement team
-- Office: leaves home 7:30am, reaches 9:30am, starts 10:30am, very flexible hours
-- Salary: ₹89,000/month + ₹20,000 freelance
-- Total debt: ₹${totalDebt.toLocaleString('en-IN')} (loans + credit card)
-- This week's envelope remaining: ₹${envelopeLeft.toLocaleString('en-IN')} of ₹6,000
-- Pending payment from client: ₹${S.pending.toLocaleString('en-IN')}
+- Works at MathCo, office flexible hours, starts 10:30am
+- Salary ₹89,000/month + ₹20,000 freelance
+- Total debt: ₹${totalDebt.toLocaleString('en-IN')}
+- Week envelope remaining: ₹${envelopeLeft.toLocaleString('en-IN')} of ₹6,000
+- Pending from client: ₹${S.pending.toLocaleString('en-IN')}
 - Bank balance: ₹${S.balance.toLocaleString('en-IN')}
-- Health goals: sleep by 1am, cut smoking from 5 to 3 sessions/day, eat breakfast (currently skips it), gain weight (50kg at 5'5")
-- Enjoys: table tennis, badminton, anime, Valorant, freelance motion design work
-- Big goal: financial freedom, stop parents from working, give them a luxurious life
-- Introverted, likes being alone at home
-- Moving to a new place next month (closer to office)
+- Health: sleep by 1am target, cut smoking 5→3 sessions/day, eat breakfast (skips it), gain weight (50kg at 5'5")
+- Enjoys: table tennis, badminton, anime, Valorant, motion design
+- Big goal: financial freedom, stop parents from working, give them luxurious life
+- Moving closer to office next month
 - Day type: ${dayLabels[selectedDayType]}
-${extra ? '- Additional context from Shazam today: ' + extra : ''}
+${extra?'- Today specifically: '+extra:''}
 
-Generate a practical, personalized daily checklist for today. Make it feel like it comes from someone who actually knows his life — specific, not generic.
+Generate a practical, personalized daily checklist. Feel like a smart friend who knows his life — specific, not generic.
 
-Return ONLY a valid JSON object with this exact structure, no markdown, no extra text:
-{
-  "note": "A short personal message to Shazam about today — 1-2 sentences, direct and warm, reference his actual situation",
-  "items": [
-    {"title": "task title", "sub": "specific why or how — make it personal to his life", "tag": "health|finance|work|growth|social", "priority": "high|medium|low"},
-    ...
-  ]
-}
+Return ONLY valid JSON, no markdown:
+{"note":"1-2 sentence personal message about today referencing his actual situation","items":[{"title":"task","sub":"specific why/how personal to his life","tag":"health|finance|work|growth|social","priority":"high|medium|low"}]}
 
-Rules:
-- 8-12 items max
-- Mix priorities — not everything is high
-- Be specific to his life — mention ₹40k pending if relevant, smoking target, breakfast, envelope etc
-- Weekday: include office routine, smoking awareness, breakfast, financial check
-- Weekend: include rest, parents call, activity, freelance/side work
-- WFH: include focused work blocks, movement, meal at home
-- Don't be preachy — be like a smart friend`;
-
-  try {
-    const raw = await callGemini(prompt);
-    const clean = raw.replace(/```json|```/g,'').trim();
-    const parsed = JSON.parse(clean);
-    S.dailyItems = parsed.items.map(i=>({...i,checked:false,id:Math.random().toString(36).substr(2,9)}));
-    S.dailyNote = parsed.note || '';
-    S.dayType = selectedDayType;
+8-12 items. Mix priorities. Reference his real numbers and goals where relevant.`;
+  try{
+    const raw=await callAI(prompt);
+    const clean=raw.replace(/```json|```/g,'').trim();
+    const parsed=JSON.parse(clean);
+    S.dailyItems=parsed.items.map(i=>({...i,checked:false,id:Math.random().toString(36).substr(2,9)}));
+    S.dailyNote=parsed.note||'';
+    S.dayType=selectedDayType;
     save();
     document.getElementById('daily-loading').style.display='none';
     renderDailyList();
-  } catch(e) {
+  }catch(e){
     document.getElementById('daily-loading').style.display='none';
     document.getElementById('daily-setup').style.display='block';
     toast('Error — try again');
   }
 }
 
-function restoreDaily(){
-  if(S.dailyItems.length && S.dayType) renderDailyList();
-}
-
+function restoreDaily(){if(S.dailyItems.length&&S.dayType)renderDailyList();}
 const dayLabelsShort={weekday:'💼 Weekday',weekend:'🌿 Weekend',wfh:'🏠 WFH Day'};
 const badgeMap={health:'badge-green',finance:'badge-yellow',work:'badge-red',growth:'badge-blue',social:'badge-green'};
 
@@ -546,102 +513,50 @@ function renderDailyList(){
   document.getElementById('daily-list').style.display='block';
   document.getElementById('daily-label').textContent=dayLabelsShort[S.dayType]||'Today';
   updateDailyProgress();
-  if(S.dailyNote){
-    document.getElementById('daily-ai-note').style.display='block';
-    document.getElementById('daily-ai-note').textContent=S.dailyNote;
-  }
-  document.getElementById('daily-items').innerHTML=S.dailyItems.map(item=>`
-    <div class="check-item">
-      <div class="check-box ${item.checked?'checked':''}" onclick="toggleDaily('${item.id}')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg>
-      </div>
-      <div style="flex:1">
-        <div class="check-title ${item.checked?'done':''}">${item.title}</div>
-        <div class="check-sub">${item.sub}</div>
-        <span class="badge ${badgeMap[item.tag]||'badge-yellow'}">${item.tag}</span>
-      </div>
-    </div>`).join('');
+  if(S.dailyNote){document.getElementById('daily-ai-note').style.display='block';document.getElementById('daily-ai-note').textContent=S.dailyNote;}
+  document.getElementById('daily-items').innerHTML=S.dailyItems.map(item=>`<div class="check-item"><div class="check-box ${item.checked?'checked':''}" onclick="toggleDaily('${item.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg></div><div style="flex:1"><div class="check-title ${item.checked?'done':''}">${item.title}</div><div class="check-sub">${item.sub}</div><span class="badge ${badgeMap[item.tag]||'badge-yellow'}">${item.tag}</span></div></div>`).join('');
 }
 
-function toggleDaily(id){
-  const item=S.dailyItems.find(i=>i.id===id);
-  if(item){item.checked=!item.checked;save();renderDailyList();renderHome();}
-}
+function toggleDaily(id){const item=S.dailyItems.find(i=>i.id===id);if(item){item.checked=!item.checked;save();renderDailyList();renderHome();}}
+function updateDailyProgress(){const done=S.dailyItems.filter(i=>i.checked).length,tot=S.dailyItems.length;document.getElementById('daily-progress').textContent=`${done} of ${tot} completed`;document.getElementById('daily-pbar').style.width=(tot?Math.round((done/tot)*100):0)+'%';}
+function resetDaily(){S.dailyItems=[];S.dayType='';S.dailyNote='';selectedDayType='';save();document.getElementById('daily-setup').style.display='block';document.getElementById('daily-list').style.display='none';document.getElementById('daily-loading').style.display='none';document.querySelectorAll('#daily-setup .tag').forEach(t=>t.classList.remove('selected'));document.getElementById('daily-extra').value='';}
 
-function updateDailyProgress(){
-  const done=S.dailyItems.filter(i=>i.checked).length,tot=S.dailyItems.length;
-  document.getElementById('daily-progress').textContent=`${done} of ${tot} completed`;
-  document.getElementById('daily-pbar').style.width=(tot?Math.round((done/tot)*100):0)+'%';
-}
-
-function resetDaily(){
-  S.dailyItems=[];S.dayType='';S.dailyNote='';selectedDayType='';save();
-  document.getElementById('daily-setup').style.display='block';
-  document.getElementById('daily-list').style.display='none';
-  document.getElementById('daily-loading').style.display='none';
-  document.querySelectorAll('#daily-setup .tag').forEach(t=>t.classList.remove('selected'));
-  document.getElementById('daily-extra').value='';
-}
-
-// VIDEO — AI POWERED
 let selectedVideoType='';
-function pickVideoType(type,el){
-  selectedVideoType=type;
-  document.querySelectorAll('#video-setup .tag').forEach(t=>t.classList.remove('selected'));
-  el.classList.add('selected');
-}
+function pickVideoType(type,el){selectedVideoType=type;document.querySelectorAll('#video-setup .tag').forEach(t=>t.classList.remove('selected'));el.classList.add('selected');}
 
 async function buildVideoChecklist(){
   const desc=document.getElementById('video-desc').value.trim();
   if(!desc){toast('Describe your video first');return;}
-
   document.getElementById('video-setup').style.display='none';
   document.getElementById('video-loading').style.display='block';
-
   const prompt=`You are a senior motion graphics and video production expert coaching Shazam, a motion graphics designer in Bangalore.
 
-PROJECT DESCRIPTION:
-"${desc}"
-Project type: ${selectedVideoType||'client'}
+PROJECT: "${desc}"
+Type: ${selectedVideoType||'client'}
 
-Generate a smart, specific production checklist for this exact project. Read the description carefully — skip steps that are clearly already done, focus on what's remaining.
+Generate a smart production checklist. Skip what's clearly done, focus on remaining steps in workflow order.
 
-Return ONLY a valid JSON object, no markdown, no extra text:
-{
-  "note": "1-2 sentence observation about this project — any risks, things to watch out for, or encouragement based on where he's at",
-  "items": [
-    {"title": "step title", "sub": "specific detail, tip, or tool to use — AE specific where relevant", "phase": "pre-production|production|post-production|delivery", "priority": "high|medium|low"},
-    ...
-  ]
-}
+Return ONLY valid JSON, no markdown:
+{"note":"1-2 sentence observation about this project — risks, watch-outs, or encouragement","items":[{"title":"step","sub":"specific detail or AE tip","phase":"pre-production|production|post-production|delivery","priority":"high|medium|low"}]}
 
-Rules:
-- Maximum 15 items, only what's actually relevant
-- Be After Effects specific — mention specific AE techniques, settings, export specs where useful
-- Order by workflow sequence
-- If deadline mentioned, flag urgency in relevant items
-- Don't include steps that are clearly described as already done
-- Delivery phase: always include invoice step for client projects`;
-
-  try {
-    const raw = await callGemini(prompt);
-    const clean = raw.replace(/```json|```/g,'').trim();
-    const parsed = JSON.parse(clean);
-    S.videoItems = parsed.items.map(i=>({...i,checked:false,uid:Math.random().toString(36).substr(2,9)}));
-    S.videoDesc = desc;
-    S.videoNote = parsed.note || '';
+Max 15 items. AE-specific where relevant. Include invoice for client projects.`;
+  try{
+    const raw=await callAI(prompt);
+    const clean=raw.replace(/```json|```/g,'').trim();
+    const parsed=JSON.parse(clean);
+    S.videoItems=parsed.items.map(i=>({...i,checked:false,uid:Math.random().toString(36).substr(2,9)}));
+    S.videoDesc=desc;S.videoNote=parsed.note||'';
     save();
     document.getElementById('video-loading').style.display='none';
     renderVideoList();
-  } catch(e) {
+  }catch(e){
     document.getElementById('video-loading').style.display='none';
     document.getElementById('video-setup').style.display='block';
     toast('Error — try again');
   }
 }
 
-function restoreVideo(){if(S.videoItems.length) renderVideoList();}
-
+function restoreVideo(){if(S.videoItems.length)renderVideoList();}
 const VIDEO_PHASES={'pre-production':'Pre-Production','production':'Production','post-production':'Post-Production','delivery':'Delivery & Client'};
 
 function renderVideoList(){
@@ -650,62 +565,23 @@ function renderVideoList(){
   document.getElementById('video-list').style.display='block';
   document.getElementById('video-desc-preview').textContent='📋 '+S.videoDesc;
   updateVideoProgress();
-  if(S.videoNote){
-    document.getElementById('video-ai-note').style.display='block';
-    document.getElementById('video-ai-note').textContent=S.videoNote;
-  }
+  if(S.videoNote){document.getElementById('video-ai-note').style.display='block';document.getElementById('video-ai-note').textContent=S.videoNote;}
   const grouped={};
-  S.videoItems.forEach(item=>{
-    if(!grouped[item.phase])grouped[item.phase]=[];
-    grouped[item.phase].push(item);
-  });
+  S.videoItems.forEach(item=>{if(!grouped[item.phase])grouped[item.phase]=[];grouped[item.phase].push(item);});
   let html='';
   Object.keys(VIDEO_PHASES).forEach(phase=>{
     if(!grouped[phase])return;
     html+=`<div class="phase-header">${VIDEO_PHASES[phase]}</div>`;
-    html+=grouped[phase].map(item=>`
-      <div class="check-item">
-        <div class="check-box ${item.checked?'checked':''}" onclick="toggleVideo('${item.uid}')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg>
-        </div>
-        <div style="flex:1">
-          <div class="check-title ${item.checked?'done':''}">${item.title}</div>
-          <div class="check-sub">${item.sub}</div>
-          <span class="badge badge-blue">${item.phase}</span>
-        </div>
-      </div>`).join('');
+    html+=grouped[phase].map(item=>`<div class="check-item"><div class="check-box ${item.checked?'checked':''}" onclick="toggleVideo('${item.uid}')"><svg viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg></div><div style="flex:1"><div class="check-title ${item.checked?'done':''}">${item.title}</div><div class="check-sub">${item.sub}</div><span class="badge badge-blue">${item.phase}</span></div></div>`).join('');
   });
   document.getElementById('video-items').innerHTML=html;
 }
 
-function toggleVideo(uid){
-  const item=S.videoItems.find(i=>i.uid===uid);
-  if(item){item.checked=!item.checked;save();renderVideoList();}
-}
+function toggleVideo(uid){const item=S.videoItems.find(i=>i.uid===uid);if(item){item.checked=!item.checked;save();renderVideoList();}}
+function updateVideoProgress(){const done=S.videoItems.filter(i=>i.checked).length,tot=S.videoItems.length;document.getElementById('video-progress').textContent=`${done} of ${tot} steps done`;document.getElementById('video-pbar').style.width=(tot?Math.round((done/tot)*100):0)+'%';}
+function resetVideo(){S.videoItems=[];S.videoDesc='';S.videoNote='';selectedVideoType='';save();document.getElementById('video-setup').style.display='block';document.getElementById('video-list').style.display='none';document.getElementById('video-loading').style.display='none';document.querySelectorAll('#video-setup .tag').forEach(t=>t.classList.remove('selected'));document.getElementById('video-desc').value='';}
 
-function updateVideoProgress(){
-  const done=S.videoItems.filter(i=>i.checked).length,tot=S.videoItems.length;
-  document.getElementById('video-progress').textContent=`${done} of ${tot} steps done`;
-  document.getElementById('video-pbar').style.width=(tot?Math.round((done/tot)*100):0)+'%';
-}
-
-function resetVideo(){
-  S.videoItems=[];S.videoDesc='';S.videoNote='';selectedVideoType='';save();
-  document.getElementById('video-setup').style.display='block';
-  document.getElementById('video-list').style.display='none';
-  document.getElementById('video-loading').style.display='none';
-  document.querySelectorAll('#video-setup .tag').forEach(t=>t.classList.remove('selected'));
-  document.getElementById('video-desc').value='';
-}
-
-// TOAST
-function toast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2200);
-}
-
-// INIT
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
 renderHome();
 </script>
 </body>
