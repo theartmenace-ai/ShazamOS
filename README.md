@@ -1,0 +1,2 @@
+# ShazamOS
+My personla tracker
