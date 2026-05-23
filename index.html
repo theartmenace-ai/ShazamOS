@@ -16,6 +16,7 @@
 --danger:#ff4444;--success:#47ff8a;--warning:#ffb347;
 }
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+h1,h2,h3,.syne{font-family:'Syne',sans-serif}
 .nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:12px 0 20px;z-index:100}
 .nav-btn{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:10px;cursor:pointer;transition:color 0.2s;padding:4px 12px}
 .nav-btn.active{color:var(--accent)}
@@ -70,7 +71,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .btn-accent{background:var(--accent);color:#0a0a0a}
 .btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
 .btn-sm{padding:9px 16px;font-size:12px;margin-top:0;width:auto}
-input[type=text],input[type=number],textarea{background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;padding:10px 12px;width:100%;outline:none;transition:border 0.2s;margin-top:8px}
+input[type=text],input[type=number],textarea,select{background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;padding:10px 12px;width:100%;outline:none;transition:border 0.2s;margin-top:8px}
 input:focus,textarea:focus{border-color:var(--accent)}
 textarea{resize:none;min-height:100px}
 .goal-card{background:linear-gradient(135deg,#1a1a0a,#0a150a);border:1px solid #3a3a1a;border-radius:16px;padding:20px;margin-bottom:12px}
@@ -80,28 +81,23 @@ textarea{resize:none;min-height:100px}
 .progress-bar-fill{height:100%;border-radius:2px;background:var(--accent);transition:width 0.4s}
 .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--accent);color:#0a0a0a;padding:10px 20px;border-radius:20px;font-family:'Syne',sans-serif;font-size:13px;font-weight:600;z-index:999;transition:transform 0.3s;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
+.divider{height:1px;background:var(--border);margin:16px 0}
 .env-bar-bg{height:4px;background:var(--border);border-radius:2px;margin-top:10px}
 .env-bar-fill{height:100%;border-radius:2px;background:var(--accent);transition:width 0.4s}
 .ai-tag{font-size:10px;color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;letter-spacing:1px;margin-bottom:10px}
 .phase-header{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);padding:12px 0 6px;border-bottom:1px solid var(--border);margin-bottom:4px}
-.loading-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;gap:16px}
-.dots{display:flex;gap:6px}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:bonce 1.2s infinite}
-.dot:nth-child(2){animation-delay:.2s}
-.dot:nth-child(3){animation-delay:.4s}
-@keyframes bonce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-10px)}}
-.loading-text{font-size:13px;color:var(--muted);font-family:'Syne',sans-serif}
-.ai-bubble{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:12px;padding:14px;margin-bottom:16px;font-size:13px;color:var(--muted);line-height:1.6}
 .video-desc-preview{font-size:12px;color:var(--muted);background:var(--surface2);border-radius:10px;padding:10px;margin-bottom:16px;line-height:1.5;border:1px solid var(--border)}
 </style>
 </head>
 <body>
+
 <div class="toast" id="toast"></div>
 
 <!-- HOME -->
 <div class="screen active" id="screen-home">
   <div class="greeting">Hey, <span>Shazam</span> 👋</div>
   <div class="date-pill" id="home-date"></div>
+
   <div class="grid2">
     <div class="card accent-card">
       <div class="card-label">Bank Balance</div>
@@ -126,16 +122,19 @@ textarea{resize:none;min-height:100px}
       <div class="card-sub">outstanding</div>
     </div>
   </div>
+
   <div class="section-title">Today's Focus</div>
   <div class="card" id="h-daily-preview">
     <div style="font-size:13px;color:var(--muted);text-align:center;padding:8px 0">Go to Daily tab to generate today's checklist</div>
   </div>
+
   <div class="section-title">Your Why</div>
   <div class="goal-card">
     <div style="font-size:28px;margin-bottom:10px">🎯</div>
     <div class="goal-title">Financial freedom.<br>Give your parents a luxurious life.</div>
     <div class="goal-desc">Stop them from working. Build income that doesn't need you at an office. Every smart decision today is a step there.</div>
   </div>
+
   <div class="section-title">Quick Actions</div>
   <div style="display:flex;gap:8px">
     <button class="btn btn-ghost btn-sm" style="flex:1" onclick="goTo('daily')">📋 Daily Check</button>
@@ -147,6 +146,7 @@ textarea{resize:none;min-height:100px}
 <div class="screen" id="screen-daily">
   <div class="greeting" style="font-size:22px">Daily <span>Checklist</span></div>
   <div class="date-pill" id="daily-date"></div>
+
   <div id="daily-setup">
     <div class="card-label">What kind of day is it?</div>
     <div style="margin-top:8px">
@@ -156,18 +156,13 @@ textarea{resize:none;min-height:100px}
     </div>
     <div style="margin-top:16px">
       <div class="card-label">Anything specific today? (optional)</div>
-      <textarea id="daily-extra" placeholder="e.g. feeling tired, have a deadline, need to pay rent, want to chase the ₹40k payment..."></textarea>
+      <textarea id="daily-extra" placeholder="e.g. feeling tired, have a deadline, pay rent today..."></textarea>
     </div>
-    <button class="btn btn-accent" onclick="buildDailyChecklist()">Generate My Day ✦</button>
+    <button class="btn btn-accent" onclick="buildDailyChecklist()">Build My Day</button>
   </div>
-  <div id="daily-loading" style="display:none">
-    <div class="loading-wrap">
-      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-      <div class="loading-text">Building your day...</div>
-    </div>
-  </div>
+
   <div id="daily-list" style="display:none">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
       <div>
         <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700" id="daily-label"></div>
         <div style="font-size:12px;color:var(--muted)" id="daily-progress"></div>
@@ -175,8 +170,7 @@ textarea{resize:none;min-height:100px}
       <button class="btn btn-ghost btn-sm" onclick="resetDaily()">Reset</button>
     </div>
     <div class="progress-bar-bg"><div class="progress-bar-fill" id="daily-pbar" style="width:0%"></div></div>
-    <div id="daily-ai-note" class="ai-bubble" style="margin-top:16px;display:none"></div>
-    <div style="margin-top:8px" id="daily-items"></div>
+    <div style="margin-top:16px" id="daily-items"></div>
   </div>
 </div>
 
@@ -184,8 +178,9 @@ textarea{resize:none;min-height:100px}
 <div class="screen" id="screen-video">
   <div class="greeting" style="font-size:22px">Video <span>Copilot</span></div>
   <div style="font-size:12px;color:var(--muted);margin-bottom:20px">Describe your project — get a smart production checklist</div>
+
   <div id="video-setup">
-    <div class="card-label">Project type</div>
+    <div class="card-label">What's the video?</div>
     <div style="margin-top:8px">
       <div class="tag" onclick="pickVideoType('client',this)">🏢 Client/Company</div>
       <div class="tag" onclick="pickVideoType('social',this)">📱 Social Content</div>
@@ -193,16 +188,23 @@ textarea{resize:none;min-height:100px}
     </div>
     <div style="margin-top:16px">
       <div class="card-label">Describe the project & where you're at</div>
-      <textarea id="video-desc" placeholder="e.g. 60-sec explainer for fintech client. Script and storyboard already received. Now handling After Effects animation and delivery. Due in 3 days."></textarea>
+      <textarea id="video-desc" placeholder="e.g. 60-sec explainer for fintech client. Script and storyboard already received. Now handling animation in AE and delivery."></textarea>
     </div>
-    <button class="btn btn-accent" onclick="buildVideoChecklist()">Build Checklist ✦</button>
-  </div>
-  <div id="video-loading" style="display:none">
-    <div class="loading-wrap">
-      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-      <div class="loading-text">Reading your project...</div>
+    <div style="margin-top:12px">
+      <div class="card-label">What's already done?</div>
+      <div style="margin-top:8px" id="done-tags">
+        <div class="tag" onclick="toggleDone(this,'script')">✅ Script</div>
+        <div class="tag" onclick="toggleDone(this,'storyboard')">✅ Storyboard</div>
+        <div class="tag" onclick="toggleDone(this,'assets')">✅ Assets ready</div>
+        <div class="tag" onclick="toggleDone(this,'music')">✅ Music selected</div>
+        <div class="tag" onclick="toggleDone(this,'voiceover')">✅ Voiceover done</div>
+        <div class="tag" onclick="toggleDone(this,'animation')">✅ Animation done</div>
+        <div class="tag" onclick="toggleDone(this,'review')">✅ Client review done</div>
+      </div>
     </div>
+    <button class="btn btn-accent" onclick="buildVideoChecklist()">Build Checklist</button>
   </div>
+
   <div id="video-list" style="display:none">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
       <div>
@@ -213,8 +215,7 @@ textarea{resize:none;min-height:100px}
     </div>
     <div class="video-desc-preview" id="video-desc-preview"></div>
     <div class="progress-bar-bg"><div class="progress-bar-fill" id="video-pbar" style="width:0%"></div></div>
-    <div id="video-ai-note" class="ai-bubble" style="margin-top:12px;display:none"></div>
-    <div style="margin-top:8px" id="video-items"></div>
+    <div style="margin-top:16px" id="video-items"></div>
   </div>
 </div>
 
@@ -222,6 +223,7 @@ textarea{resize:none;min-height:100px}
 <div class="screen" id="screen-finance">
   <div class="greeting" style="font-size:22px">Finance <span>Dashboard</span></div>
   <div class="date-pill" id="fin-date"></div>
+
   <div class="grid2">
     <div class="card accent-card" onclick="editBalance()">
       <div class="card-label">Bank Balance</div>
@@ -234,6 +236,7 @@ textarea{resize:none;min-height:100px}
       <div class="card-sub">tap to update</div>
     </div>
   </div>
+
   <div class="section-title">Weekly Envelope</div>
   <div class="card">
     <div class="stat-row"><div class="stat-key">Weekly budget</div><div class="stat-val">₹6,000</div></div>
@@ -246,11 +249,13 @@ textarea{resize:none;min-height:100px}
     </div>
     <button class="btn btn-ghost" style="margin-top:8px;font-size:12px" onclick="resetEnvelope()">Reset envelope (new week)</button>
   </div>
+
   <div class="section-title">Debts</div>
   <div class="card">
     <div id="f-debts"></div>
     <button class="btn btn-ghost" style="font-size:12px" onclick="showDebtEditor()">Update Balances</button>
   </div>
+
   <div id="debt-editor" style="display:none">
     <div class="section-title">Update Debt Balances</div>
     <div class="card">
@@ -266,6 +271,7 @@ textarea{resize:none;min-height:100px}
       <button class="btn btn-ghost" onclick="hideDebtEditor()">Cancel</button>
     </div>
   </div>
+
   <div class="section-title">Salary Day Playbook</div>
   <div class="card">
     <div class="ai-tag">EXECUTE IN THIS ORDER — EVERY SALARY DAY</div>
@@ -278,6 +284,7 @@ textarea{resize:none;min-height:100px}
     <div class="stat-row"><div class="stat-key">7. Savings — don't touch</div><div class="stat-val" style="color:var(--success)">₹5,000</div></div>
     <div class="stat-row" style="border:none"><div class="stat-key">8. Week 1 envelope</div><div class="stat-val" style="color:var(--accent)">₹6,000</div></div>
   </div>
+
   <div class="card" style="border-color:#ffb34744;background:#ffb3470a">
     <div class="ai-tag" style="color:var(--warning)">FREELANCE MONEY RULE — ALWAYS</div>
     <div class="stat-row"><div class="stat-key">Debt acceleration</div><div class="stat-val yellow">₹10,000</div></div>
@@ -290,6 +297,7 @@ textarea{resize:none;min-height:100px}
 <div class="screen" id="screen-health">
   <div class="greeting" style="font-size:22px">Health <span>Log</span></div>
   <div class="date-pill">Weekly snapshot</div>
+
   <div class="section-title">Log This Week</div>
   <div class="card">
     <div class="stat-row">
@@ -314,6 +322,7 @@ textarea{resize:none;min-height:100px}
     </div>
     <button class="btn btn-accent" onclick="saveHealth()">Save Week</button>
   </div>
+
   <div class="section-title">Your Targets</div>
   <div class="card">
     <div class="stat-row"><div class="stat-key">In bed by</div><div class="stat-val green">1:00 AM</div></div>
@@ -322,12 +331,14 @@ textarea{resize:none;min-height:100px}
     <div class="stat-row"><div class="stat-key">Weight goal</div><div class="stat-val" style="color:var(--muted)">50kg → 60kg</div></div>
     <div class="stat-row" style="border:none"><div class="stat-key">Gym (post-move)</div><div class="stat-val" style="color:var(--muted)">Coming soon</div></div>
   </div>
+
   <div class="section-title">Smoking Cost Reality</div>
   <div class="card">
     <div class="stat-row"><div class="stat-key">5 sessions/day</div><div class="stat-val red">₹22,500/mo</div></div>
     <div class="stat-row"><div class="stat-key">3 sessions/day</div><div class="stat-val yellow">₹13,500/mo</div></div>
     <div class="stat-row" style="border:none"><div class="stat-key">You save by cutting 2</div><div class="stat-val green">₹9,000/mo</div></div>
   </div>
+
   <div class="section-title">Past Logs</div>
   <div id="h-history" class="card">
     <div style="font-size:13px;color:var(--muted);text-align:center;padding:8px">No logs yet</div>
@@ -354,16 +365,7 @@ textarea{resize:none;min-height:100px}
 </nav>
 
 <script>
-async function callAI(prompt) {
-  const res = await fetch('/.netlify/functions/gemini', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({prompt})
-  });
-  const data = await res.json();
-  return data.text;
-}
-
+// ── STATE ──────────────────────────────────────────────
 let S = {
   balance: 11600, pending: 40000, weekSpent: 0,
   debts: [
@@ -372,14 +374,15 @@ let S = {
     {name:'Hand debts', orig:30000, cur:30000, emi:0},
     {name:'SBI Credit Card', orig:10000, cur:10000, emi:0}
   ],
-  dailyItems:[], dayType:'', dailyNote:'',
-  videoItems:[], videoDesc:'', videoNote:'',
+  dailyItems:[], dayType:'',
+  videoItems:[], videoType:'', doneTags:[],
   health:[]
 };
-function save(){try{localStorage.setItem('sz3',JSON.stringify(S))}catch(e){}}
-function load(){try{const d=localStorage.getItem('sz3');if(d)S=JSON.parse(d)}catch(e){}}
+function save(){try{localStorage.setItem('sz',JSON.stringify(S))}catch(e){}}
+function load(){try{const d=localStorage.getItem('sz');if(d)S=JSON.parse(d)}catch(e){}}
 load();
 
+// ── NAV ───────────────────────────────────────────────
 function goTo(s){
   document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
@@ -392,19 +395,21 @@ function goTo(s){
   if(s==='video') restoreVideo();
 }
 
+// ── DATES ─────────────────────────────────────────────
 function fmtDate(d){return d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'})}
-document.getElementById('home-date').textContent=fmtDate(new Date());
-document.getElementById('daily-date').textContent=fmtDate(new Date());
-document.getElementById('fin-date').textContent=fmtDate(new Date());
+document.getElementById('home-date').textContent = fmtDate(new Date());
+document.getElementById('daily-date').textContent = fmtDate(new Date());
+document.getElementById('fin-date').textContent = fmtDate(new Date());
 
+// ── HOME ──────────────────────────────────────────────
 function renderHome(){
-  document.getElementById('h-balance').textContent='₹'+S.balance.toLocaleString('en-IN');
-  document.getElementById('h-pending').textContent='₹'+S.pending.toLocaleString('en-IN');
-  document.getElementById('h-envelope').textContent='₹'+Math.max(0,6000-S.weekSpent).toLocaleString('en-IN');
-  document.getElementById('h-debt').textContent='₹'+S.debts.reduce((a,d)=>a+d.cur,0).toLocaleString('en-IN');
-  const prev=document.getElementById('h-daily-preview');
+  document.getElementById('h-balance').textContent = '₹'+S.balance.toLocaleString('en-IN');
+  document.getElementById('h-pending').textContent = '₹'+S.pending.toLocaleString('en-IN');
+  document.getElementById('h-envelope').textContent = '₹'+Math.max(0,6000-S.weekSpent).toLocaleString('en-IN');
+  document.getElementById('h-debt').textContent = '₹'+S.debts.reduce((a,d)=>a+d.cur,0).toLocaleString('en-IN');
+  const prev = document.getElementById('h-daily-preview');
   if(S.dailyItems.length){
-    const done=S.dailyItems.filter(i=>i.checked).length,tot=S.dailyItems.length;
+    const done=S.dailyItems.filter(i=>i.checked).length, tot=S.dailyItems.length;
     const pct=Math.round((done/tot)*100);
     prev.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700">${done}/${tot} tasks done</div><span class="badge ${done===tot?'badge-green':'badge-yellow'}">${done===tot?'✓ Complete':'In progress'}</span></div><div class="progress-bar-bg" style="margin-top:10px"><div class="progress-bar-fill" style="width:${pct}%"></div></div><div style="font-size:11px;color:var(--muted);margin-top:6px">Tap Daily tab to continue</div>`;
   } else {
@@ -412,6 +417,7 @@ function renderHome(){
   }
 }
 
+// ── FINANCE ───────────────────────────────────────────
 function renderFinance(){
   document.getElementById('f-balance').textContent='₹'+S.balance.toLocaleString('en-IN');
   document.getElementById('f-pending').textContent='₹'+S.pending.toLocaleString('en-IN');
@@ -432,15 +438,24 @@ function renderFinance(){
 function editBalance(){const v=prompt('Current bank balance (₹):');if(v&&!isNaN(v)){S.balance=+v;save();renderFinance();renderHome();toast('Balance updated');}}
 function editPending(){const v=prompt('Total pending receivables (₹):');if(v&&!isNaN(v)){S.pending=+v;save();renderFinance();renderHome();toast('Updated');}}
 function addSpend(){const v=+document.getElementById('spend-input').value;if(!v||v<=0)return;S.weekSpent+=v;document.getElementById('spend-input').value='';save();renderFinance();toast('-₹'+v.toLocaleString('en-IN')+' from envelope');}
-function resetEnvelope(){if(confirm('Reset weekly envelope?')){S.weekSpent=0;save();renderFinance();toast('Envelope reset');}}
+function resetEnvelope(){if(confirm('Reset weekly envelope to ₹6,000?')){S.weekSpent=0;save();renderFinance();toast('Envelope reset for new week');}}
 function showDebtEditor(){document.getElementById('debt-editor').style.display='block';S.debts.forEach((d,i)=>document.getElementById('d'+(i+1)).value=d.cur||'');}
 function hideDebtEditor(){document.getElementById('debt-editor').style.display='none';}
 function saveDebts(){S.debts.forEach((d,i)=>{const v=+document.getElementById('d'+(i+1)).value;if(!isNaN(v)&&v>=0)d.cur=v;});save();renderFinance();hideDebtEditor();toast('Debts updated');}
 
+// ── HEALTH ────────────────────────────────────────────
 function renderHealth(){
   const el=document.getElementById('h-history');
   if(!S.health.length){el.innerHTML='<div style="font-size:13px;color:var(--muted);text-align:center;padding:8px">No logs yet</div>';return;}
-  el.innerHTML=S.health.slice().reverse().map(h=>`<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)"><div style="font-family:'Syne',sans-serif;font-size:11px;color:var(--muted);margin-bottom:8px">${h.date}</div><div class="stat-row"><div class="stat-key">Sleep time</div><div class="stat-val">${h.st||'—'}</div></div><div class="stat-row"><div class="stat-key">Hours</div><div class="stat-val ${+h.hrs>=6?'green':'red'}">${h.hrs||0}h</div></div><div class="stat-row"><div class="stat-key">Cig sessions/day</div><div class="stat-val ${+h.cigs<=3?'green':'yellow'}">${h.cigs||0}</div></div><div class="stat-row"><div class="stat-key">Breakfast</div><div class="stat-val">${h.bfast||0}/7 days</div></div><div class="stat-row" style="border:none"><div class="stat-key">Active days</div><div class="stat-val">${h.active||0}/7</div></div></div>`).join('');
+  el.innerHTML=S.health.slice().reverse().map(h=>`
+    <div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+      <div style="font-family:'Syne',sans-serif;font-size:11px;color:var(--muted);margin-bottom:8px">${h.date}</div>
+      <div class="stat-row"><div class="stat-key">Sleep time</div><div class="stat-val">${h.st||'—'}</div></div>
+      <div class="stat-row"><div class="stat-key">Hours</div><div class="stat-val ${+h.hrs>=6?'green':'red'}">${h.hrs||0}h</div></div>
+      <div class="stat-row"><div class="stat-key">Cig sessions/day</div><div class="stat-val ${+h.cigs<=3?'green':'yellow'}">${h.cigs||0}</div></div>
+      <div class="stat-row"><div class="stat-key">Breakfast</div><div class="stat-val">${h.bfast||0}/7 days</div></div>
+      <div class="stat-row" style="border:none"><div class="stat-key">Active days</div><div class="stat-val">${h.active||0}/7</div></div>
+    </div>`).join('');
 }
 function saveHealth(){
   const entry={date:fmtDate(new Date()),st:document.getElementById('h-sleep-time').value,hrs:document.getElementById('h-sleep-hrs').value,cigs:document.getElementById('h-cigs').value,bfast:document.getElementById('h-bfast').value,active:document.getElementById('h-active').value};
@@ -449,139 +464,273 @@ function saveHealth(){
   toast('Week logged!');
 }
 
-let selectedDayType='';
-function pickDay(type,el){
-  selectedDayType=type;
+// ── DAILY CHECKLIST TEMPLATES ─────────────────────────
+const DAILY_TEMPLATES = {
+  weekday:{
+    label:'💼 Weekday',
+    items:[
+      {title:'Eat breakfast before leaving',sub:'Banana + biscuits minimum. You leave at 7:30 — eat something.',tag:'health',priority:'high'},
+      {title:'Check this week\'s envelope balance',sub:'Know how much you have left before spending anything today.',tag:'finance',priority:'high'},
+      {title:'Count cigarette sessions today',sub:'Target is 3 or less. Just be aware — don\'t stress, just notice.',tag:'health',priority:'high'},
+      {title:'Office lunch — keep it under ₹200',sub:'₹75 meal + ₹65 side dish. Don\'t add extras unnecessarily.',tag:'finance',priority:'medium'},
+      {title:'Do one thing toward the ₹40k follow-up',sub:'A message, a call, a reminder. Keep it moving.',tag:'finance',priority:'high'},
+      {title:'Evening: stop screens by 12:30am',sub:'You don\'t need a fixed sleep time — just a cut-off for screens.',tag:'health',priority:'medium'},
+      {title:'Call parents this week',sub:'You talk once or twice a week — tick this when done.',tag:'social',priority:'low'},
+      {title:'One skill or tool you want to explore',sub:'10 mins on anything — After Effects trick, AI tool, YouTube tutorial.',tag:'growth',priority:'low'},
+    ]
+  },
+  weekend:{
+    label:'🌿 Weekend',
+    items:[
+      {title:'Sleep in — properly',sub:'Let yourself rest fully. Don\'t set an alarm unless you have to.',tag:'health',priority:'high'},
+      {title:'Eat two proper meals today',sub:'Don\'t skip meals on weekends. Your body needs fuel.',tag:'health',priority:'high'},
+      {title:'Call parents',sub:'Weekend is the best time. Even 15 minutes.',tag:'social',priority:'high'},
+      {title:'Review your week financially',sub:'Open Finance tab — check envelope, check debt, check pending.',tag:'finance',priority:'medium'},
+      {title:'Play TT or Badminton',sub:'You already enjoy this — don\'t let the weekend pass without moving.',tag:'health',priority:'medium'},
+      {title:'Work on freelance or side project',sub:'Even 2 hours of focused work on a day off compounds.',tag:'growth',priority:'medium'},
+      {title:'Plan next week — 5 minutes',sub:'What are the 3 things that matter most next week?',tag:'growth',priority:'low'},
+      {title:'No Swiggy guilt — but track it',sub:'Order what you want today, just log the amount.',tag:'finance',priority:'low'},
+    ]
+  },
+  wfh:{
+    label:'🏠 WFH Day',
+    items:[
+      {title:'Start work by 10:30am',sub:'Flexible hours are a gift — don\'t abuse them.',tag:'work',priority:'high'},
+      {title:'Eat breakfast at home',sub:'You\'re home — no excuse to skip. Make something simple.',tag:'health',priority:'high'},
+      {title:'Set a clear work end time',sub:'WFH blurs boundaries. Decide: done by 7pm.',tag:'work',priority:'high'},
+      {title:'Stand up and move every 90 mins',sub:'Set a reminder. Walk around the room. You\'re sitting all day.',tag:'health',priority:'medium'},
+      {title:'Keep cigarette sessions to 3 max',sub:'Easier to track at home since you\'re not in a group.',tag:'health',priority:'high'},
+      {title:'Check and update expense log',sub:'Log yesterday\'s spends in the Finance tab.',tag:'finance',priority:'medium'},
+      {title:'Do one focused freelance or growth task',sub:'Use the time saved from commute for something that compounds.',tag:'growth',priority:'medium'},
+      {title:'Cook or order one meal at home',sub:'Saves ₹200-300 vs Swiggy. Small but real.',tag:'finance',priority:'low'},
+    ]
+  }
+};
+
+// EXTRA CONTEXT MODIFIERS
+function applyExtras(items, extra){
+  if(!extra) return items;
+  const e = extra.toLowerCase();
+  const extras = [];
+  if(e.includes('deadline') || e.includes('urgent'))
+    extras.unshift({title:'Clear today\'s deadline — focus block',sub:'Block 2 hours minimum. No distractions. This is priority one.',tag:'work',priority:'high'});
+  if(e.includes('tired') || e.includes('low energy'))
+    extras.push({title:'Don\'t push too hard today',sub:'Low energy day. Do the essentials. Rest is productive too.',tag:'health',priority:'medium'});
+  if(e.includes('rent') || e.includes('pay'))
+    extras.unshift({title:'Make the payment today',sub:'Don\'t carry this to tomorrow. Do it first.',tag:'finance',priority:'high'});
+  if(e.includes('freelance') || e.includes('client'))
+    extras.push({title:'Follow up with freelance client',sub:'Send an update or chase the pending ₹40k.',tag:'finance',priority:'high'});
+  if(e.includes('gym') || e.includes('exercise') || e.includes('workout'))
+    extras.push({title:'Go to the gym today',sub:'You said you wanted to. Don\'t talk yourself out of it.',tag:'health',priority:'high'});
+  return [...extras, ...items];
+}
+
+let selectedDayType = '';
+function pickDay(type, el){
+  selectedDayType = type;
   document.querySelectorAll('#daily-setup .tag').forEach(t=>t.classList.remove('selected'));
   el.classList.add('selected');
 }
 
-async function buildDailyChecklist(){
+function buildDailyChecklist(){
   if(!selectedDayType){toast('Pick a day type first');return;}
-  const extra=document.getElementById('daily-extra').value;
-  const totalDebt=S.debts.reduce((a,d)=>a+d.cur,0);
-  const envelopeLeft=Math.max(0,6000-S.weekSpent);
-  const dayLabels={weekday:'Weekday — office day, leaves home 7:30am, back 10pm due to commute',weekend:'Weekend — rest day, no office',wfh:'Work from home day'};
-  document.getElementById('daily-setup').style.display='none';
-  document.getElementById('daily-loading').style.display='block';
-  const prompt=`You are a personal life coach AI for Shazam, a 28-year-old motion graphics designer in Bangalore, India.
+  const extra = document.getElementById('daily-extra').value;
+  const template = DAILY_TEMPLATES[selectedDayType];
+  let items = template.items.map(i=>({...i, checked:false, id:Math.random().toString(36).substr(2,9)}));
+  items = applyExtras(items, extra);
+  S.dailyItems = items;
+  S.dayType = selectedDayType;
+  save();
+  renderDailyList(template.label);
+}
 
-SHAZAM'S CONTEXT:
-- Works at MathCo, office flexible hours, starts 10:30am
-- Salary ₹89,000/month + ₹20,000 freelance
-- Total debt: ₹${totalDebt.toLocaleString('en-IN')}
-- Week envelope remaining: ₹${envelopeLeft.toLocaleString('en-IN')} of ₹6,000
-- Pending from client: ₹${S.pending.toLocaleString('en-IN')}
-- Bank balance: ₹${S.balance.toLocaleString('en-IN')}
-- Health: sleep by 1am target, cut smoking 5→3 sessions/day, eat breakfast (skips it), gain weight (50kg at 5'5")
-- Enjoys: table tennis, badminton, anime, Valorant, motion design
-- Big goal: financial freedom, stop parents from working, give them luxurious life
-- Moving closer to office next month
-- Day type: ${dayLabels[selectedDayType]}
-${extra?'- Today specifically: '+extra:''}
-
-Generate a practical, personalized daily checklist. Feel like a smart friend who knows his life — specific, not generic.
-
-Return ONLY valid JSON, no markdown:
-{"note":"1-2 sentence personal message about today referencing his actual situation","items":[{"title":"task","sub":"specific why/how personal to his life","tag":"health|finance|work|growth|social","priority":"high|medium|low"}]}
-
-8-12 items. Mix priorities. Reference his real numbers and goals where relevant.`;
-  try{
-    const raw=await callAI(prompt);
-    const clean=raw.replace(/```json|```/g,'').trim();
-    const parsed=JSON.parse(clean);
-    S.dailyItems=parsed.items.map(i=>({...i,checked:false,id:Math.random().toString(36).substr(2,9)}));
-    S.dailyNote=parsed.note||'';
-    S.dayType=selectedDayType;
-    save();
-    document.getElementById('daily-loading').style.display='none';
-    renderDailyList();
-  }catch(e){
-    document.getElementById('daily-loading').style.display='none';
-    document.getElementById('daily-setup').style.display='block';
-    toast('Error — try again');
+function restoreDaily(){
+  if(S.dailyItems.length && S.dayType){
+    renderDailyList(DAILY_TEMPLATES[S.dayType]?.label || 'Today');
   }
 }
 
-function restoreDaily(){if(S.dailyItems.length&&S.dayType)renderDailyList();}
-const dayLabelsShort={weekday:'💼 Weekday',weekend:'🌿 Weekend',wfh:'🏠 WFH Day'};
-const badgeMap={health:'badge-green',finance:'badge-yellow',work:'badge-red',growth:'badge-blue',social:'badge-green'};
-
-function renderDailyList(){
+function renderDailyList(label){
   document.getElementById('daily-setup').style.display='none';
-  document.getElementById('daily-loading').style.display='none';
   document.getElementById('daily-list').style.display='block';
-  document.getElementById('daily-label').textContent=dayLabelsShort[S.dayType]||'Today';
+  document.getElementById('daily-label').textContent=label;
   updateDailyProgress();
-  if(S.dailyNote){document.getElementById('daily-ai-note').style.display='block';document.getElementById('daily-ai-note').textContent=S.dailyNote;}
-  document.getElementById('daily-items').innerHTML=S.dailyItems.map(item=>`<div class="check-item"><div class="check-box ${item.checked?'checked':''}" onclick="toggleDaily('${item.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg></div><div style="flex:1"><div class="check-title ${item.checked?'done':''}">${item.title}</div><div class="check-sub">${item.sub}</div><span class="badge ${badgeMap[item.tag]||'badge-yellow'}">${item.tag}</span></div></div>`).join('');
+  const badgeMap={health:'badge-green',finance:'badge-yellow',work:'badge-red',growth:'badge-blue',social:'badge-green'};
+  document.getElementById('daily-items').innerHTML=S.dailyItems.map(item=>`
+    <div class="check-item">
+      <div class="check-box ${item.checked?'checked':''}" onclick="toggleDaily('${item.id}')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg>
+      </div>
+      <div style="flex:1">
+        <div class="check-title ${item.checked?'done':''}">${item.title}</div>
+        <div class="check-sub">${item.sub}</div>
+        <span class="badge ${badgeMap[item.tag]||'badge-yellow'}">${item.tag}</span>
+      </div>
+    </div>`).join('');
 }
 
-function toggleDaily(id){const item=S.dailyItems.find(i=>i.id===id);if(item){item.checked=!item.checked;save();renderDailyList();renderHome();}}
-function updateDailyProgress(){const done=S.dailyItems.filter(i=>i.checked).length,tot=S.dailyItems.length;document.getElementById('daily-progress').textContent=`${done} of ${tot} completed`;document.getElementById('daily-pbar').style.width=(tot?Math.round((done/tot)*100):0)+'%';}
-function resetDaily(){S.dailyItems=[];S.dayType='';S.dailyNote='';selectedDayType='';save();document.getElementById('daily-setup').style.display='block';document.getElementById('daily-list').style.display='none';document.getElementById('daily-loading').style.display='none';document.querySelectorAll('#daily-setup .tag').forEach(t=>t.classList.remove('selected'));document.getElementById('daily-extra').value='';}
+function toggleDaily(id){
+  const item=S.dailyItems.find(i=>i.id===id);
+  if(item){item.checked=!item.checked;save();renderDailyList(DAILY_TEMPLATES[S.dayType]?.label||'Today');renderHome();}
+}
 
-let selectedVideoType='';
-function pickVideoType(type,el){selectedVideoType=type;document.querySelectorAll('#video-setup .tag').forEach(t=>t.classList.remove('selected'));el.classList.add('selected');}
+function updateDailyProgress(){
+  const done=S.dailyItems.filter(i=>i.checked).length, tot=S.dailyItems.length;
+  const pct=tot?Math.round((done/tot)*100):0;
+  document.getElementById('daily-progress').textContent=`${done} of ${tot} completed`;
+  document.getElementById('daily-pbar').style.width=pct+'%';
+}
 
-async function buildVideoChecklist(){
+function resetDaily(){
+  S.dailyItems=[];S.dayType='';selectedDayType='';save();
+  document.getElementById('daily-setup').style.display='block';
+  document.getElementById('daily-list').style.display='none';
+  document.querySelectorAll('#daily-setup .tag').forEach(t=>t.classList.remove('selected'));
+  document.getElementById('daily-extra').value='';
+}
+
+// ── VIDEO CHECKLIST TEMPLATES ─────────────────────────
+const VIDEO_PHASES = {
+  'pre-production':'Pre-Production',
+  'production':'Production',
+  'post-production':'Post-Production',
+  'delivery':'Delivery & Client'
+};
+
+const VIDEO_ALL_STEPS = [
+  // PRE-PRODUCTION
+  {id:'brief',title:'Confirm project brief with client',sub:'Duration, format, platform, key message, tone. Get it in writing.',phase:'pre-production',needs:[]},
+  {id:'script',title:'Script — final version confirmed',sub:'Make sure you have the final, approved script before animating.',phase:'pre-production',needs:[]},
+  {id:'storyboard',title:'Storyboard — reviewed and approved',sub:'Visual flow locked before you open After Effects.',phase:'pre-production',needs:[]},
+  {id:'assets',title:'Collect all assets from client',sub:'Logos (vector), brand colors (hex), fonts, images, existing footage.',phase:'pre-production',needs:[]},
+  {id:'music',title:'Select and clear background music',sub:'Match energy to video tone. Check licensing — client use needs proper license.',phase:'pre-production',needs:[]},
+  {id:'voiceover',title:'Voiceover — recorded and delivered',sub:'Confirm VO is synced to script. Get the WAV/MP3 file.',phase:'pre-production',needs:[]},
+  // PRODUCTION
+  {id:'ae-setup',title:'Set up After Effects project structure',sub:'Separate comps for each scene. Name layers properly. Set correct frame rate and resolution.',phase:'production',needs:[]},
+  {id:'animatic',title:'Build animatic / rough timing',sub:'Rough cut in AE to check pacing before full animation.',phase:'production',needs:['storyboard']},
+  {id:'animation',title:'Animate all scenes',sub:'Work scene by scene. Match timing to VO or music. Consistent motion style.',phase:'production',needs:['script','storyboard']},
+  {id:'audio-sync',title:'Sync audio — VO and music',sub:'VO on top, music underneath. Check levels — VO should be clear over music.',phase:'production',needs:['music','voiceover','animation']},
+  {id:'sfx',title:'Add sound effects if needed',sub:'Subtle UI sounds, transitions. Don\'t overdo it.',phase:'production',needs:['animation']},
+  // POST-PRODUCTION
+  {id:'color',title:'Color grading — consistent across all scenes',sub:'Match color temperature and contrast. Use Lumetri or AE color tools.',phase:'post-production',needs:['animation']},
+  {id:'review-internal',title:'Internal review — watch full video twice',sub:'Once for content accuracy, once for animation smoothness and errors.',phase:'post-production',needs:['animation','audio-sync']},
+  {id:'captions',title:'Add captions if required',sub:'Check if client needs subtitles. Match font to brand.',phase:'post-production',needs:['animation']},
+  {id:'render-draft',title:'Render draft for client review',sub:'H.264, 1080p for review. Don\'t send final quality until feedback is addressed.',phase:'post-production',needs:['review-internal']},
+  // DELIVERY
+  {id:'review',title:'Send draft to client — get feedback',sub:'Share via Google Drive or WeTransfer. Give them a 48-72 hour review window.',phase:'delivery',needs:['render-draft']},
+  {id:'revisions',title:'Apply client revisions',sub:'Document all changes. Confirm in writing what was changed.',phase:'delivery',needs:['review']},
+  {id:'final-render',title:'Final render — master quality',sub:'ProRes or high-bitrate H.264. Keep the master file. Render all required formats.',phase:'delivery',needs:['revisions']},
+  {id:'export-formats',title:'Export all required formats',sub:'Usually: 1080p MP4, possibly 9:16 for social, maybe a GIF preview.',phase:'delivery',needs:['final-render']},
+  {id:'invoice',title:'Send invoice to client',sub:'Don\'t forget. Project is complete — invoice immediately.',phase:'delivery',needs:['final-render']},
+];
+
+let selectedVideoType='', doneTags=[];
+function pickVideoType(type,el){
+  selectedVideoType=type;
+  document.querySelectorAll('#video-setup .tag:not(#done-tags .tag)').forEach(t=>t.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function toggleDone(el,tag){
+  el.classList.toggle('selected');
+  if(el.classList.contains('selected')){if(!doneTags.includes(tag))doneTags.push(tag);}
+  else doneTags=doneTags.filter(t=>t!==tag);
+}
+
+function buildVideoChecklist(){
   const desc=document.getElementById('video-desc').value.trim();
   if(!desc){toast('Describe your video first');return;}
-  document.getElementById('video-setup').style.display='none';
-  document.getElementById('video-loading').style.display='block';
-  const prompt=`You are a senior motion graphics and video production expert coaching Shazam, a motion graphics designer in Bangalore.
 
-PROJECT: "${desc}"
-Type: ${selectedVideoType||'client'}
+  // Filter out steps that are already done
+  const doneMap={
+    script:['script'],storyboard:['storyboard'],assets:['assets'],
+    music:['music'],voiceover:['voiceover'],animation:['animation','animatic','ae-setup'],
+    review:['review','review-internal']
+  };
+  const skipIds=new Set();
+  doneTags.forEach(tag=>{(doneMap[tag]||[]).forEach(id=>skipIds.add(id));});
 
-Generate a smart production checklist. Skip what's clearly done, focus on remaining steps in workflow order.
+  // Also auto-detect from description
+  const d=desc.toLowerCase();
+  if(d.includes('script'))skipIds.add('script');
+  if(d.includes('storyboard'))skipIds.add('storyboard');
+  if(d.includes('animation') && (d.includes('done') || d.includes('finished') || d.includes('complete')))skipIds.add('animation');
+  if(d.includes('voiceover') || d.includes('vo'))skipIds.add('voiceover');
+  if(d.includes('music') && (d.includes('selected') || d.includes('done')))skipIds.add('music');
 
-Return ONLY valid JSON, no markdown:
-{"note":"1-2 sentence observation about this project — risks, watch-outs, or encouragement","items":[{"title":"step","sub":"specific detail or AE tip","phase":"pre-production|production|post-production|delivery","priority":"high|medium|low"}]}
+  // Build remaining steps
+  let steps=VIDEO_ALL_STEPS.filter(s=>!skipIds.has(s.id));
 
-Max 15 items. AE-specific where relevant. Include invoice for client projects.`;
-  try{
-    const raw=await callAI(prompt);
-    const clean=raw.replace(/```json|```/g,'').trim();
-    const parsed=JSON.parse(clean);
-    S.videoItems=parsed.items.map(i=>({...i,checked:false,uid:Math.random().toString(36).substr(2,9)}));
-    S.videoDesc=desc;S.videoNote=parsed.note||'';
-    save();
-    document.getElementById('video-loading').style.display='none';
-    renderVideoList();
-  }catch(e){
-    document.getElementById('video-loading').style.display='none';
-    document.getElementById('video-setup').style.display='block';
-    toast('Error — try again');
-  }
+  // If it's a social/personal project, remove invoice and some client steps
+  if(selectedVideoType==='personal'){steps=steps.filter(s=>!['invoice','review','revisions'].includes(s.id));}
+  if(selectedVideoType==='social'){steps=steps.filter(s=>s.id!=='invoice');}
+
+  S.videoItems=steps.map(s=>({...s,checked:false,uid:Math.random().toString(36).substr(2,9)}));
+  S.videoDesc=desc;
+  S.videoType=selectedVideoType;
+  save();
+  renderVideoList();
 }
 
 function restoreVideo(){if(S.videoItems.length)renderVideoList();}
-const VIDEO_PHASES={'pre-production':'Pre-Production','production':'Production','post-production':'Post-Production','delivery':'Delivery & Client'};
 
 function renderVideoList(){
   document.getElementById('video-setup').style.display='none';
-  document.getElementById('video-loading').style.display='none';
   document.getElementById('video-list').style.display='block';
   document.getElementById('video-desc-preview').textContent='📋 '+S.videoDesc;
   updateVideoProgress();
-  if(S.videoNote){document.getElementById('video-ai-note').style.display='block';document.getElementById('video-ai-note').textContent=S.videoNote;}
+
   const grouped={};
-  S.videoItems.forEach(item=>{if(!grouped[item.phase])grouped[item.phase]=[];grouped[item.phase].push(item);});
+  S.videoItems.forEach(item=>{
+    if(!grouped[item.phase])grouped[item.phase]={};
+    if(!grouped[item.phase].items)grouped[item.phase].items=[];
+    grouped[item.phase].items.push(item);
+  });
+
   let html='';
   Object.keys(VIDEO_PHASES).forEach(phase=>{
     if(!grouped[phase])return;
     html+=`<div class="phase-header">${VIDEO_PHASES[phase]}</div>`;
-    html+=grouped[phase].map(item=>`<div class="check-item"><div class="check-box ${item.checked?'checked':''}" onclick="toggleVideo('${item.uid}')"><svg viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg></div><div style="flex:1"><div class="check-title ${item.checked?'done':''}">${item.title}</div><div class="check-sub">${item.sub}</div><span class="badge badge-blue">${item.phase}</span></div></div>`).join('');
+    html+=grouped[phase].items.map(item=>`
+      <div class="check-item">
+        <div class="check-box ${item.checked?'checked':''}" onclick="toggleVideo('${item.uid}')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg>
+        </div>
+        <div style="flex:1">
+          <div class="check-title ${item.checked?'done':''}">${item.title}</div>
+          <div class="check-sub">${item.sub}</div>
+        </div>
+      </div>`).join('');
   });
   document.getElementById('video-items').innerHTML=html;
 }
 
-function toggleVideo(uid){const item=S.videoItems.find(i=>i.uid===uid);if(item){item.checked=!item.checked;save();renderVideoList();}}
-function updateVideoProgress(){const done=S.videoItems.filter(i=>i.checked).length,tot=S.videoItems.length;document.getElementById('video-progress').textContent=`${done} of ${tot} steps done`;document.getElementById('video-pbar').style.width=(tot?Math.round((done/tot)*100):0)+'%';}
-function resetVideo(){S.videoItems=[];S.videoDesc='';S.videoNote='';selectedVideoType='';save();document.getElementById('video-setup').style.display='block';document.getElementById('video-list').style.display='none';document.getElementById('video-loading').style.display='none';document.querySelectorAll('#video-setup .tag').forEach(t=>t.classList.remove('selected'));document.getElementById('video-desc').value='';}
+function toggleVideo(uid){
+  const item=S.videoItems.find(i=>i.uid===uid);
+  if(item){item.checked=!item.checked;save();renderVideoList();}
+}
 
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+function updateVideoProgress(){
+  const done=S.videoItems.filter(i=>i.checked).length,tot=S.videoItems.length;
+  document.getElementById('video-progress').textContent=`${done} of ${tot} steps remaining`;
+  document.getElementById('video-pbar').style.width=Math.round((done/tot)*100)+'%';
+}
+
+function resetVideo(){
+  S.videoItems=[];S.videoDesc='';S.videoType='';selectedVideoType='';doneTags=[];save();
+  document.getElementById('video-setup').style.display='block';
+  document.getElementById('video-list').style.display='none';
+  document.querySelectorAll('#video-setup .tag').forEach(t=>t.classList.remove('selected'));
+  document.getElementById('video-desc').value='';
+}
+
+// ── TOAST ─────────────────────────────────────────────
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// ── INIT ──────────────────────────────────────────────
 renderHome();
 </script>
 </body>
